@@ -54,18 +54,18 @@ public class ShowMyOrder extends HttpServlet {
 	public void init() {
 		InitialContext jndiContext = null;
 
-		//Properties properties = new Properties();
-		//properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
-		//properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+		Properties properties = new Properties();
+		properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
+		properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		try {
-			//jndiContext = new InitialContext(properties);
-			//datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/onlinestock");
+			jndiContext = new InitialContext(properties);
+			datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/onlinestock");
 			System.out.println("got context");
 			System.out.println("About to get ds---ShowMyStock");
-		//} catch (NamingException e) {
+		} catch (NamingException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		//}
+			e.printStackTrace();
+		}
 
 	}
 
@@ -173,20 +173,21 @@ public class ShowMyOrder extends HttpServlet {
 
 		try {
 			System.out.println(req.getAttribute("login"));
-			stmt = connection.prepareStatement("select stockid from mystock where userid = ?");
+			stmt = connection.prepareStatement("select order from order where userid = ?");
 			stmt.setString(1, (String) req.getAttribute("login"));
 			result = stmt.executeQuery();
 			while (result.next()) {
 				Order order = new Order();
-//				stock.setId(result.getInt("stockid"));
+				order.setId(result.getInt("orderid"));
+				//stock.setId(result.getInt("stockid"));
 				/*
 				 * stock.setCompanyName(result.getString(2));
 				 * stock.setType(result.getString(3));
 				 * stock.setPrice(result.getDouble(4));
 				 * stock.setDate(result.getDate("date"));
 				 */
-//				list.add(stock);
-				System.out.println("stockid: "+result.getInt("stockid"));
+				list.add(order);
+				System.out.println("orderid: "+result.getInt("orderid"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
